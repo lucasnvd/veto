@@ -43,6 +43,7 @@ module Veto
 end
 
 # base
+require 'forwardable'
 require 'veto/version'
 require 'veto/exceptions'
 require 'veto/errors'
