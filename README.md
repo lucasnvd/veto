@@ -500,7 +500,7 @@ The Veto Model extension does exactly this, associating your entity with a speci
 
 ```ruby
 class Person
-    include Veto.model(PersonValidator)
+    include Veto.model(PersonValidator.new)
 end
 
 person.new
