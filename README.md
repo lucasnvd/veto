@@ -388,23 +388,20 @@ class PersonValidator
 end
 ```
 
-### Custom Attribute Validator
+### Custom Attribute Checker
 
-Much like the built-in `presence`, `max_length`, and `format` attribute validators, you can create your own custom validator, and refer to it using the `validates` method. Custom attribute validators must extend the Veto::AttributeValidator class, implement a `validate` method which receives 5 arguments: entity, attribute, value, errors, and options.
+Much like the built-in `presence`, `max_length`, and `format` attribute checkers, you can create your own custom checker, and refer to it using the `check` method. Custom attribute checkers must extend the Veto::AttributeChecker class, implement a `check` method which receives 4 arguments: attribute, value, errors, and options.
 
 ```ruby
-class PersonValidator
-    include Veto.validator
-    
-    class EmailValidator < ::Veto::AttributeValidator
-        def validate(entity, attribute, value, errors, options={})
-            unless value.to_s =~ /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-                errors.add(attribute, "is not a valid email address")
-            end
+module Veto
+    class IsStringCheck < AttributeCheck
+        def check(attribute, value, errors, options={})
+            on = options.fetch(:on, attribute)
+            unless value.is_a?(String)
+                errors.add(on, "is not a string")
+            end     
         end
     end
-    
-    validates :electronic_address, :email => true
 end
 ```
 

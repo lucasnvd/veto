@@ -31,6 +31,24 @@ module Veto
         Checker.from_children(children)
       end
 
+      # Ensures that when a Validator class is subclassed, the 
+      # validation rules will be carried into the subclass as well,
+      # where they may be added upon.
+      # 
+      # @example
+      #   class PersonValidator
+      #     include Veto.validator
+      #     validates :name, :presence => true
+      #   end
+      #
+      #   class EmployeeValidator < PersonValidator
+      #     validates :employee_id, :presence => true
+      #   end
+      #
+      #   employee = Employee.new
+      #   validator = EmployeeValidator.new
+      #   validator.validate!(employee) # => ["name is not present", "employee_id is not present"]
+
       def inherited(descendant)
         descendant.check_with(build_checker(checker.children.dup))
       end
@@ -40,20 +58,32 @@ module Veto
       @errors ||= ::Veto::Errors.new
     end
 
+    # Sets errors to nil. 
+    def clear_errors
+      @errors = nil
+    end
+
+    # Returns boolean value representing the validaty of the entity
+    #
+    # @return [Boolean]
     def valid?(entity)
       validate(entity)
       errors.empty?
     end
 
+    # Raises exception if entity is invalid
+    #
+    # @example
+    #   person = Person.new
+    #   validator = PersonValidator.new
+    #   validator.validate!(person) # => Veto::InvalidEntity, ["first name is not present", "..."]    
+    #
+    # @raise [Veto::InvalidEntity] if the entity is invalid
     def validate!(entity)
       raise(::Veto::InvalidEntity, errors) unless valid?(entity)
     end
 
     private
-
-    def clear_errors
-      @errors = nil
-    end
 
     def validate(entity)
       clear_errors
