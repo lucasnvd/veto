@@ -282,7 +282,7 @@ class PersonValidator
     
     validates :last_name, :presence => true, :if => :first_name_set?
     
-    def first_name_set?
+    def first_name_set?(entity)
         entity.first_name
     end
 end
@@ -325,7 +325,7 @@ class PersonValidator
         validates :admin_level, :inclusion => [3,4,5]
     end
     
-    def person_is_admin?
+    def person_is_admin?(entity)
         entity.is_admin
     end
 end
@@ -374,13 +374,13 @@ class PersonValidator
     
     validate :supervisor_must_have_supervisor_code, :admins_have_last_names
     
-    def supervisor_must_have_supervisor_code
-        if entity.is_admin? && entity.employees.size > 0 && supervisor_code.nil?
+    def supervisor_must_have_supervisor_code(entity)
+        if entity.is_admin? && entity.employees.size > 0 && entity.supervisor_code.nil?
             errors.add(:supervisor_code, "can't be blank")
         end
     end
     
-    def admins_have_last_names
+    def admins_have_last_names(entity)
         if entity.is_admin? && entity.last_name
             errors.add(:last_name, "can't be blank")
         end
