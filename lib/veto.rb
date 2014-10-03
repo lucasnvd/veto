@@ -19,7 +19,7 @@ module Veto
   #
   # @example 
   #   class Person
-  #    include Veto.model(PersonValidator)
+  #    include Veto.model(PersonValidator.new)
   #   end 
   #
   # @param validator [Class] the Veto validator class
